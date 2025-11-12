@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Admin - Trekly{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h2">
+                <i class="bi bi-speedometer2"></i> Dashboard de Administración
+            </h1>
+            <p class="text-muted">Panel de control de Trekly Admin</p>
+        </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people-fill"></i> Usuarios</h5>
+                    <h2>{{ total_users }}</h2>
+                    <p class="mb-0">Total de usuarios</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-person-badge"></i> Guías</h5>
+                    <h2>{{ total_guides }}</h2>
+                    <p class="mb-0">Guías registrados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-shield-check"></i> Admins</h5>
+                    <h2>{{ total_admins }}</h2>
+                    <p class="mb-0">Administradores</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-check-circle"></i> Activos</h5>
+                    <h2>{{ active_users }}</h2>
+                    <p class="mb-0">Usuarios activos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gestión -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-people-fill"></i> Gestión de Usuarios</h5>
+                </div>
+                <div class="card-body">
+                    <p>Total: <strong>{{ total_users }}</strong> usuarios</p>
+                    <p>Guías: <strong>{{ total_guides }}</strong></p>
+                    <p>Admins: <strong>{{ total_admins }}</strong></p>
+                    <p>Activos: <strong>{{ active_users }}</strong></p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'trekly_admin_users' %}" class="btn btn-primary">
+                            <i class="bi bi-list"></i> Ver Usuarios
+                        </a>
+                        <a href="/admin/users/user/" class="btn btn-outline-primary">
+                            <i class="bi bi-gear"></i> Admin Django
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-map-fill"></i> Gestión de Rutas</h5>
+                </div>
+                <div class="card-body">
+                    <p>Total: <strong>{{ total_routes }}</strong> rutas</p>
+                    <p>Activas: <strong>{{ active_routes }}</strong></p>
+                    <p>Inactivas: <strong>{{ total_routes|add:"-"|add:active_routes }}</strong></p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'trekly_admin_routes' %}" class="btn btn-success">
+                            <i class="bi bi-list"></i> Ver Rutas
+                        </a>
+                        <a href="/admin/routes/route/" class="btn btn-outline-success">
+                            <i class="bi bi-gear"></i> Admin Django
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

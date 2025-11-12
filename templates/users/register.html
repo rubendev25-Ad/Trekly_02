@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrarse - Trekly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Crear Cuenta</h2>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">Nombre *</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">Apellido *</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña *</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <small class="text-muted">Mínimo 8 caracteres</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Confirmar Contraseña *</label>
+                            <input type="password" class="form-control" id="password2" name="password2" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 mb-3">
+                            <i class="bi bi-person-plus"></i> Crear Cuenta
+                        </button>
+
+                        <div class="text-center mb-3">
+                            <span class="text-muted">O continúa con</span>
+                        </div>
+
+                        <a href="{% url 'google_login' %}" class="btn btn-outline-danger w-100 mb-3">
+                            <i class="bi bi-google"></i> Continuar con Google
+                        </a>
+
+                        <p class="text-center mb-0">
+                            ¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Limpiar formulario si hay error
+    {% if messages %}
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registerForm');
+        if (form) {
+            // No limpiar el email y nombres para que el usuario no tenga que volver a escribirlos
+            // Solo limpiar las contraseñas
+            document.getElementById('password').value = '';
+            document.getElementById('password2').value = '';
+        }
+    });
+    {% endif %}
+</script>
+{% endblock %}

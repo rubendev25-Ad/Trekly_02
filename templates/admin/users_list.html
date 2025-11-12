@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Gestión de Usuarios</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'trekly_admin_dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Usuarios</li>
+        </ol>
+    </nav>
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.is_superuser %}Admin{% elif user.is_guide %}Guía{% else %}Usuario{% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_active %}Activo{% else %}Inactivo{% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'trekly_admin_user_detail' user.id %}" class="btn btn-sm btn-info">Ver</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

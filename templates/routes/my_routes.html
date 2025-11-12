@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Rutas - Trekly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-map"></i> Mis Rutas</h1>
+        <a href="{% url 'route_create' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Crear Nueva Ruta
+        </a>
+    </div>
+
+    {% if routes %}
+    <div class="row">
+        {% for route in routes %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        {% if route.image %}
+                        <img src="{{ route.image.url }}" class="img-fluid rounded-start h-100" 
+                             alt="{{ route.title }}" style="object-fit: cover;">
+                        {% else %}
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center h-100 rounded-start">
+                            <i class="bi bi-image" style="font-size: 3rem;"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ route.title }}</h5>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-geo-alt"></i> {{ route.location }}<br>
+                                    <i class="bi bi-clock"></i> {{ route.duration }}h | 
+                                    <i class="bi bi-currency-dollar"></i> ${{ route.price }}
+                                </small>
+                            </p>
+                            <p class="card-text">
+                                <span class="badge bg-{{ route.difficulty }}">{{ route.get_difficulty_display }}</span>
+                                {% if route.is_active %}
+                                <span class="badge bg-success">Activa</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Inactiva</span>
+                                {% endif %}
+                            </p>
+                            <div class="d-flex gap-2 mt-3">
+                                <a href="{% url 'route_detail' route.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Ver
+                                </a>
+                                <a href="{% url 'route_edit' route.id %}" class="btn btn-sm btn-outline-warning">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                                <a href="{% url 'route_delete' route.id %}" class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('¿Estás seguro de eliminar esta ruta?')">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> No has creado ninguna ruta aún.
+        <a href="{% url 'route_create' %}" class="alert-link">¡Crea tu primera ruta!</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

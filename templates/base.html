@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trekly - Descubre Aventuras{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        :root {
+            --primary-color: #1a5f3f;
+            --secondary-color: #4db380;
+            --trekly-green: #2c7a5d;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .navbar-brand img {
+            height: 45px;
+            width: auto;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, var(--trekly-green), var(--secondary-color));
+            color: white;
+            padding: 80px 0;
+        }
+        .card-hover {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .difficulty-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        footer {
+            background-color: #1a5f3f;
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        .btn-success {
+            background-color: var(--trekly-green);
+            border-color: var(--trekly-green);
+        }
+        .btn-success:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .text-success {
+            color: var(--trekly-green) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Trekly Logo" class="d-inline-block">
+                <span>Trekly</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'route_list' %}">Explorar</a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'booking_list' %}">Mis Reservas</a>
+                        </li>
+                        {% if user.is_guide %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'my_routes' %}">Mis Rutas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'route_create' %}">Crear Ruta</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'profile' %}">Mi Perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'my_reviews' %}">Mis Reseñas</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Iniciar Sesión</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-success ms-2" href="{% url 'register' %}">Registrarse</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{% static 'images/logo.png' %}" alt="Trekly Logo" style="height: 40px; margin-right: 10px;">
+                        <h5 class="mb-0">Trekly</h5>
+                    </div>
+                    <p>Descubre las mejores rutas turísticas con guías expertos.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Enlaces Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'route_list' %}" class="text-white text-decoration-none">Explorar Rutas</a></li>
+                        <li><a href="{% url 'guides_list' %}" class="text-white text-decoration-none">Guías</a></li>
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'booking_list' %}" class="text-white text-decoration-none">Mis Reservas</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contacto</h5>
+                    <p>
+                        <i class="bi bi-envelope"></i> info@trekly.com<br>
+                        <i class="bi bi-phone"></i> +57 300 123 4567
+                    </p>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2024 Trekly. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestión de Rutas - Admin Trekly{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h2">
+                <i class="bi bi-map-fill"></i> Gestión de Rutas
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'trekly_admin_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Rutas</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="btn-group" role="group">
+                <a href="{% url 'trekly_admin_routes' %}" class="btn btn-sm {% if not status %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    Todas
+                </a>
+                <a href="{% url 'trekly_admin_routes' %}?status=active" class="btn btn-sm {% if status == 'active' %}btn-success{% else %}btn-outline-success{% endif %}">
+                    Activas
+                </a>
+                <a href="{% url 'trekly_admin_routes' %}?status=inactive" class="btn btn-sm {% if status == 'inactive' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+                    Inactivas
+                </a>
+            </div>
+            <a href="{% url 'trekly_admin_route_create' %}" class="btn btn-sm btn-success float-end">
+                <i class="bi bi-plus-circle"></i> Nueva Ruta
+            </a>
+        </div>
+    </div>
+
+    <!-- Tabla de rutas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Guía</th>
+                                    <th>Dificultad</th>
+                                    <th>Duración</th>
+                                    <th>Precio</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for route in routes %}
+                                <tr>
+                                    <td>{{ route.id }}</td>
+                                    <td>
+                                        <strong>{{ route.name }}</strong>
+                                    </td>
+                                    <td>{{ route.created_by.get_full_name|default:route.created_by.username }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if route.difficulty == 'easy' %}success{% elif route.difficulty == 'moderate' %}warning{% else %}danger{% endif %}">
+                                            {{ route.get_difficulty_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ route.duration }} días</td>
+                                    <td>${{ route.price }}</td>
+                                    <td>
+                                        {% if route.is_active %}
+                                            <span class="badge bg-success">Activa</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactiva</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{% url 'trekly_admin_route_detail' route.id %}" class="btn btn-info" title="Ver detalle">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{% url 'trekly_admin_route_edit' route.id %}" class="btn btn-warning" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{% url 'trekly_admin_route_toggle' route.id %}" class="btn btn-{% if route.is_active %}secondary{% else %}success{% endif %}" title="{% if route.is_active %}Desactivar{% else %}Activar{% endif %}">
+                                                <i class="bi bi-{% if route.is_active %}dash-circle{% else %}check-circle{% endif %}"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">
+                                        No hay rutas registradas.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

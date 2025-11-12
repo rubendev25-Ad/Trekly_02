@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Explorar Rutas - Trekly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4"><i class="bi bi-search"></i> Explorar Rutas</h1>
+
+    <!-- Search and Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="{% url 'route_list' %}">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" name="q" placeholder="Buscar rutas..." value="{{ query }}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <select class="form-select" name="difficulty">
+                            <option value="">Todas las dificultades</option>
+                            <option value="easy" {% if difficulty == 'easy' %}selected{% endif %}>Fácil</option>
+                            <option value="moderate" {% if difficulty == 'moderate' %}selected{% endif %}>Moderada</option>
+                            <option value="hard" {% if difficulty == 'hard' %}selected{% endif %}>Difícil</option>
+                            <option value="expert" {% if difficulty == 'expert' %}selected{% endif %}>Experto</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <input type="text" class="form-control" name="location" placeholder="Ubicación" value="{{ location }}">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Routes List -->
+    {% if routes %}
+    <div class="row">
+        {% for route in routes %}
+        <div class="col-md-4 mb-4">
+            <div class="card card-hover h-100">
+                {% if route.image %}
+                <img src="{{ route.image.url }}" class="card-img-top" alt="{{ route.title }}" style="height: 250px; object-fit: cover;">
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 250px;">
+                    <i class="bi bi-image" style="font-size: 4rem;"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ route.title }}</h5>
+                    <p class="card-text">
+                        <i class="bi bi-geo-alt text-success"></i> {{ route.location }}<br>
+                        <span class="badge bg-{{ route.difficulty }} difficulty-badge me-1">{{ route.get_difficulty_display }}</span>
+                        <span class="badge bg-info difficulty-badge me-1"><i class="bi bi-clock"></i> {{ route.duration }}h</span>
+                        <span class="badge bg-warning difficulty-badge">
+                            <i class="bi bi-star-fill"></i> 
+                            {{ route.get_average_rating|floatformat:1 }}
+                        </span>
+                    </p>
+                    <p class="card-text">{{ route.description|truncatewords:20 }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="h5 mb-0 text-success">${{ route.price }}</span>
+                        <a href="{% url 'route_detail' route.id %}" class="btn btn-success">
+                            Ver Detalles
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted small">
+                    Por {{ route.created_by.get_full_name }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle"></i> 
+        {% if query or difficulty or location %}
+        No se encontraron rutas con los criterios de búsqueda.
+        <a href="{% url 'route_list' %}" class="alert-link">Ver todas las rutas</a>
+        {% else %}
+        No hay rutas disponibles en este momento.
+        {% if user.is_authenticated and user.is_guide %}
+        <a href="{% url 'route_create' %}" class="alert-link">¡Crea la primera ruta!</a>
+        {% endif %}
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

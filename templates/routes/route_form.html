@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if route %}Editar{% else %}Crear{% endif %} Ruta - Trekly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">
+                        <i class="bi bi-{% if route %}pencil{% else %}plus-circle{% endif %}"></i>
+                        {% if route %}Editar Ruta{% else %}Crear Nueva Ruta{% endif %}
+                    </h2>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Título *</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   value="{% if route %}{{ route.title }}{% endif %}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descripción *</label>
+                            <textarea class="form-control" id="description" name="description" 
+                                      rows="5" required>{% if route %}{{ route.description }}{% endif %}</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Ubicación *</label>
+                                <input type="text" class="form-control" id="location" name="location" 
+                                       value="{% if route %}{{ route.location }}{% endif %}" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="difficulty" class="form-label">Dificultad *</label>
+                                <select class="form-select" id="difficulty" name="difficulty" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="easy" {% if route and route.difficulty == 'easy' %}selected{% endif %}>Fácil</option>
+                                    <option value="moderate" {% if route and route.difficulty == 'moderate' %}selected{% endif %}>Moderada</option>
+                                    <option value="hard" {% if route and route.difficulty == 'hard' %}selected{% endif %}>Difícil</option>
+                                    <option value="expert" {% if route and route.difficulty == 'expert' %}selected{% endif %}>Experto</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="duration" class="form-label">Duración (horas) *</label>
+                                <input type="number" class="form-control" id="duration" name="duration" 
+                                       min="1" value="{% if route %}{{ route.duration }}{% endif %}" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label">Precio ($) *</label>
+                                <input type="number" class="form-control" id="price" name="price" 
+                                       step="0.01" min="0" value="{% if route %}{{ route.price }}{% endif %}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Imagen</label>
+                            {% if route and route.image %}
+                            <div class="mb-2">
+                                <img src="{{ route.image.url }}" alt="{{ route.title }}" 
+                                     class="img-thumbnail" style="max-height: 200px;">
+                            </div>
+                            {% endif %}
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <small class="text-muted">Formatos: JPG, PNG. Máximo 5MB.</small>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save"></i> {% if route %}Actualizar{% else %}Crear{% endif %} Ruta
+                            </button>
+                            <a href="{% if route %}{% url 'route_detail' route.id %}{% else %}{% url 'route_list' %}{% endif %}" 
+                               class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

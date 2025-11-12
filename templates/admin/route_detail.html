@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Detalle de Ruta</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'trekly_admin_dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'trekly_admin_routes' %}">Rutas</a></li>
+            <li class="breadcrumb-item active">{{ route.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">{{ route.name }}</h3>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <p><strong>Descripción:</strong></p>
+                    <p>{{ route.description }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Ubicación:</strong> {{ route.location|default:"No especificada" }}</p>
+                    <p><strong>Creado por:</strong> {{ route.created_by.get_full_name|default:route.created_by.username }}</p>
+                    <p><strong>Fecha de creación:</strong> {{ route.created_at|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <p><strong>Dificultad:</strong></p>
+                    <span class="badge bg-{% if route.difficulty == 'easy' %}success{% elif route.difficulty == 'moderate' %}warning{% else %}danger{% endif %}">
+                        {{ route.get_difficulty_display }}
+                    </span>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Duración:</strong></p>
+                    <p>{{ route.duration }} días</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Precio:</strong></p>
+                    <p>${{ route.price }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Máx. participantes:</strong></p>
+                    <p>{{ route.max_participants }} personas</p>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <p><strong>Estado:</strong></p>
+                    {% if route.is_active %}
+                        <span class="badge bg-success">Activa</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inactiva</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{% url 'trekly_admin_route_edit' route.id %}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a href="{% url 'trekly_admin_route_toggle' route.id %}" class="btn btn-{% if route.is_active %}secondary{% else %}success{% endif %}">
+                    <i class="bi bi-{% if route.is_active %}dash-circle{% else %}check-circle{% endif %}"></i> 
+                    {% if route.is_active %}Desactivar{% else %}Activar{% endif %}
+                </a>
+                <a href="{% url 'trekly_admin_routes' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

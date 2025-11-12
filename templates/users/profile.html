@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil - Trekly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if profile_user.profile_image %}
+                    <img src="{{ profile_user.profile_image.url }}" class="rounded-circle mb-3" width="150" height="150" alt="{{ profile_user.get_full_name }}">
+                    {% else %}
+                    <i class="bi bi-person-circle text-muted" style="font-size: 8rem;"></i>
+                    {% endif %}
+                    
+                    <h3>{{ profile_user.get_full_name }}</h3>
+                    <p class="text-muted">@{{ profile_user.username }}</p>
+                    
+                    {% if profile_user.is_guide %}
+                    <span class="badge bg-success mb-3">
+                        <i class="bi bi-award"></i> Guía Certificado
+                    </span>
+                    {% endif %}
+
+                    {% if user == profile_user %}
+                    <a href="{% url 'profile_edit' %}" class="btn btn-primary w-100 mb-2">
+                        <i class="bi bi-pencil"></i> Editar Perfil
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4>Información Personal</h4>
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <strong><i class="bi bi-envelope"></i> Email:</strong><br>
+                        {{ profile_user.email }}
+                    </div>
+
+                    {% if profile_user.location %}
+                    <div class="mb-3">
+                        <strong><i class="bi bi-geo-alt"></i> Ubicación:</strong><br>
+                        {{ profile_user.location }}
+                    </div>
+                    {% endif %}
+
+                    {% if profile_user.bio %}
+                    <div class="mb-3">
+                        <strong><i class="bi bi-file-text"></i> Biografía:</strong><br>
+                        {{ profile_user.bio }}
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <strong><i class="bi bi-calendar"></i> Miembro desde:</strong><br>
+                        {{ profile_user.created_at|date:"d M Y" }}
+                    </div>
+                </div>
+            </div>
+
+            {% if profile_user.is_guide %}
+            <div class="card">
+                <div class="card-body">
+                    <h4>Rutas Creadas</h4>
+                    <hr>
+                    <!-- Aquí se mostrarían las rutas del guía -->
+                    <a href="{% url 'route_list' %}?guide={{ profile_user.id }}" class="btn btn-success">
+                        Ver Todas las Rutas
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

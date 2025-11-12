@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ route.title }} - Trekly{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Route Image -->
+            {% if route.image %}
+            <img src="{{ route.image.url }}" class="img-fluid rounded mb-4" alt="{{ route.title }}">
+            {% else %}
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded mb-4" style="height: 400px;">
+                <i class="bi bi-image" style="font-size: 6rem;"></i>
+            </div>
+            {% endif %}
+
+            <!-- Route Details -->
+            <h1 class="mb-3">{{ route.title }}</h1>
+            
+            <div class="mb-3">
+                <span class="badge bg-{{ route.difficulty }} me-2">{{ route.get_difficulty_display }}</span>
+                <span class="badge bg-info me-2"><i class="bi bi-clock"></i> {{ route.duration }} horas</span>
+                <span class="badge bg-secondary"><i class="bi bi-geo-alt"></i> {{ route.location }}</span>
+            </div>
+
+            <!-- Rating -->
+            <div class="mb-4">
+                <span class="text-warning">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= average_rating %}
+                        <i class="bi bi-star-fill"></i>
+                        {% else %}
+                        <i class="bi bi-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                <span class="text-muted">({{ reviews_count }} reseñas)</span>
+            </div>
+
+            <!-- Description -->
+            <h3>Descripción</h3>
+            <p class="lead">{{ route.description }}</p>
+
+            <!-- Guide Info -->
+            <div class="card my-4">
+                <div class="card-body">
+                    <h5 class="card-title">Tu Guía</h5>
+                    <div class="d-flex align-items-center">
+                        {% if route.created_by.profile_image %}
+                        <img src="{{ route.created_by.profile_image.url }}" class="rounded-circle me-3" width="60" height="60" alt="{{ route.created_by.get_full_name }}">
+                        {% else %}
+                        <i class="bi bi-person-circle me-3" style="font-size: 3rem;"></i>
+                        {% endif %}
+                        <div>
+                            <h6 class="mb-0">{{ route.created_by.get_full_name }}</h6>
+                            <small class="text-muted">@{{ route.created_by.username }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <h3 class="mt-5">Reseñas</h3>
+            {% if user.is_authenticated %}
+            <a href="{% url 'review_create' route.id %}" class="btn btn-outline-success mb-3">
+                <i class="bi bi-plus-circle"></i> Escribir Reseña
+            </a>
+            {% endif %}
+
+            {% for review in route.reviews.all %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="mb-0">{{ review.user.get_full_name }}</h6>
+                            <small class="text-muted">{{ review.created_at|date:"d M Y" }}</small>
+                        </div>
+                        <div>
+                            <span class="text-warning">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                    <i class="bi bi-star-fill"></i>
+                                    {% else %}
+                                    <i class="bi bi-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                    </div>
+                    <p class="mt-2 mb-0">{{ review.comment }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">Aún no hay reseñas para esta ruta.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h2 class="text-success mb-3">${{ route.price }}</h2>
+                    <p class="text-muted">Por persona</p>
+                    
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'booking_create' route.id %}" class="btn btn-success btn-lg w-100 mb-3">
+                            <i class="bi bi-calendar-check"></i> Reservar Ahora
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-success btn-lg w-100 mb-3">
+                            Iniciar Sesión para Reservar
+                        </a>
+                    {% endif %}
+
+                    <hr>
+
+                    <h6>Detalles de la Ruta</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt text-success"></i>
+                            <strong>Ubicación:</strong> {{ route.location }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-clock text-success"></i>
+                            <strong>Duración:</strong> {{ route.duration }} horas
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-speedometer2 text-success"></i>
+                            <strong>Dificultad:</strong> {{ route.get_difficulty_display }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-calendar text-success"></i>
+                            <strong>Creada:</strong> {{ route.created_at|date:"d M Y" }}
+                        </li>
+                    </ul>
+
+                    {% if user == route.created_by or user.is_staff %}
+                    <hr>
+                    <h6>Gestión</h6>
+                    <a href="{% url 'route_edit' route.id %}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                        <i class="bi bi-pencil"></i> Editar Ruta
+                    </a>
+                    <a href="{% url 'route_delete' route.id %}" class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('¿Estás seguro de eliminar esta ruta?')">
+                        <i class="bi bi-trash"></i> Eliminar Ruta
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
